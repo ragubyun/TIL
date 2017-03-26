@@ -95,3 +95,22 @@ manveCentral|sonatype.org|덜빠름|큼|과거|낮음(어려움)
 
 ### 그루비란?
 Groovy는 자바에 파이썬, 루비, 스몰토크등의 특징을 더한 동적 객체 지향 프로그래밍 언어입니다.  JVM에서 동작하고 자바의 강점 위에서 파이썬, 루비, 스몰토크 등의 프로그래밍 언어에 영향을 받은 특징 및 장점이 있습니다. 자바 기반이기 때문에 자바 프로그래머들이 많은 학습을 하지 않아도 프로그래밍을 할 수 있다는 점과 단순화된 문법을 지원하여 코드를 읽고 유지보수하기 편하다는 장점이 있습니다. by [불곰 블로그](http://brownbears.tistory.com)
+
+
+
+
+
+- backlog
+  - support-xxx-v7 vs. support-xxx-v4
+  - sdkVersion: compile vs. min vs. target
+  - buildToolVersion vs. plugin version
+  - applicationId는 유일해야 하고 바뀌면 전혀 새로운 앱이 됨
+  - 레파지토리 추가 방법, compile, testCompile, annotationProcessor, androidTestCompile 설명
+  - 안드로이드 빌드 툴(오른쪽에 나오는거), 플러그인(application, libary, java 등) 설명
+  - debug, release
+  - 빌드 변형 구성 flavor(product, demo, full)
+  - flavor 실제 코드에 적용시키는 방법
+  - dependency 설정: 경로, 레파지토리 등
+  - 
+  
+
