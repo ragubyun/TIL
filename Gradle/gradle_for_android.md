@@ -34,6 +34,7 @@ task clean(type: Delete) {
 }
 ```
 - build.gradle (Module: app)
+
 ```
 apply plugin: 'com.android.application'
 
