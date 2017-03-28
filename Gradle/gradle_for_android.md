@@ -1,11 +1,11 @@
-# 궁금했지만 항상 그냥 지나쳤던 안드로이드에서의 Gradle, 얉게 한번 파보자. ~~사실 별로 궁금해하지 않고 그냥 씀~~
+# 궁금했지만 항상 그냥 지나쳤던 안드로이드에서의 Gradle, 얉게 한번 파보자. ~~사실 별로 궁금해하지 않고 그냥 사용 하는 경우가 대다수..~~
 
 ## Gradle? 그래들? 그레이들?
 
-- 책에는 ‘그레이들’로 발음하는 경우가 많음
+- 책에서서는 ‘그레이들’로 발음하는 경우가 많음
 - 어차피 한글로 구글링해도 gradle로 검색됨
 - 결론: 그래-들
-- 빌드 자동화 툴 (친구들: ant, maven)
+- 빌드 자동화 툴 (친구들: ant, maven, make)
 
 ## 빌드란?
 
@@ -13,83 +13,101 @@
 - apk(**a**ndroid **p**ac**k**age), aar(**a**ndroid **ar**chive)
 - 로 만드는 과정
 
-## 안드로이드 기본 프로젝트 모양을 살펴보자
+## 안드로이드 기본 프로젝트 구조를 살펴보자
 
-- build.gradle (Project: MyAppliation)
+- Project 로 보기
 
-```gradle
-buildscript {
-    repositories {
-        jcenter() // mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.0'
-    }
-}
+  ![Project](./image/structure_project.png)
 
-allprojects {
-    repositories {
-        jcenter()
-    }
-}
+- Android 로 보기
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
-}
-```
+  ![Android](./image/structure_android.png)
 
-- build.gradle (Module: app)
+## Gradle 관련 파일
 
-```gradle
-apply plugin: 'com.android.application'
+- build.gradle (Project: MyAppliation): 크게 두 부분
 
-android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
-    defaultConfig {
-        applicationId "com.example.ragu.myapplication"
-        minSdkVersion 19
-        targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-}
+  ```gradle
+  buildscript {
+      repositories {
+          jcenter()
+      }
+      dependencies {
+          classpath 'com.android.tools.build:gradle:2.3.0'
+      }
+  }
 
-dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    compile 'com.android.support:appcompat-v7:25.1.0'
-    testCompile 'junit:junit:4.12'
-}
+  allprojects {
+      repositories {
+          jcenter()
+      }
+  }
 
-```
+  task clean(type: Delete) {
+      delete rootProject.buildDir
+  }
+  ```
+
+- build.gradle (Module: app): 크게 네 부분
+
+  ```gradle
+  apply plugin: 'com.android.application'
+
+  android {
+      compileSdkVersion 25
+      buildToolsVersion "25.0.2"
+      defaultConfig {
+          applicationId "com.example.ragu.myapplication"
+          minSdkVersion 19
+          targetSdkVersion 25
+          versionCode 1
+          versionName "1.0"
+          testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+      }
+      buildTypes {
+          release {
+              minifyEnabled false
+              proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+          }
+      }
+  }
+
+  dependencies {
+      compile fileTree(dir: 'libs', include: ['*.jar'])
+      androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+          exclude group: 'com.android.support', module: 'support-annotations'
+      })
+      compile 'com.android.support:appcompat-v7:25.1.0'
+      testCompile 'junit:junit:4.12'
+  }
+
+  ```
 
 - gradle.settings
 
-```gradle
-include ':app'
-```
+  ```gradle
+  include ':app'
+  ```
 
 - gradle.properties
 
-```gradle
-systemProp.http.proxyHost=70.10.15.10
-systemProp.http.proxyPort=8080
-systemProp.http.nonProxyHosts=70.*|localhost
+  ```gradle
+  systemProp.http.proxyHost=70.10.15.10
+  systemProp.http.proxyPort=8080
+  systemProp.http.nonProxyHosts=70.*|localhost
 
-systemProp.https.proxyHost=70.10.15.10
-systemProp.https.proxyPort=8080
-systemProp.https.nonProxyHosts=70.*|localhost
-```
+  systemProp.https.proxyHost=70.10.15.10
+  systemProp.https.proxyPort=8080
+  systemProp.https.nonProxyHosts=70.*|localhost
+  ```
+
+## Gradle은 그루비로 작성되어 있다
+
+> Groovy is an agile and dynamic language for the Java Virtual Machine.
+
+### 그루비란?
+
+> Groovy는 자바에 파이썬, 루비, 스몰토크등의 특징을 더한 동적 객체 지향 프로그래밍 언어입니다.  JVM에서 동작하고 자바의 강점 위에서 파이썬, 루비, 스몰토크 등의 프로그래밍 언어에 영향을 받은 특징 및 장점이 있습니다. 자바 기반이기 때문에 자바 프로그래머들이 많은 학습을 하지 않아도 프로그래밍을 할 수 있다는 점과 단순화된 문법을 지원하여 코드를 읽고 유지보수하기 편하다는 장점이 있습니다. by [불곰 블로그](http://brownbears.tistory.com)
 
 ## 저장소 비교
 
@@ -100,23 +118,35 @@ manveCentral|sonatype.org|덜빠름|큼|과거|낮음(어려움)
 
 > bintray.com은 `jcenter`에서 `maven central`으로 배포하는 기능을 제공한다.
 
-## gradle은 그루비로 작성되어 있다.
+## SDK Version
 
-> Groovy is an agile and dynamic language for the Java Virtual Machine.
+속성 이름|내용
+-|-
+compileSdkVersion|컴파일에 사용할 SDK 버전
+minSdkVersion|지원하는 최소 SDK 버전으로, SDK 버전이 이 값보다 낮은 기기에서는 해당 어플리케이션을 검색할 수 없음.
+targetSdkVersion|어플리케이션이 의도하는 목적 SDK 버전. 최신버전보다 낮으면 안드로이드 스튜디오에서 경고 표시됨.
 
-### 그루비란?
+## applicationId(패키지 이름으로 많이 불림)
 
-Groovy는 자바에 파이썬, 루비, 스몰토크등의 특징을 더한 동적 객체 지향 프로그래밍 언어입니다.  JVM에서 동작하고 자바의 강점 위에서 파이썬, 루비, 스몰토크 등의 프로그래밍 언어에 영향을 받은 특징 및 장점이 있습니다. 자바 기반이기 때문에 자바 프로그래머들이 많은 학습을 하지 않아도 프로그래밍을 할 수 있다는 점과 단순화된 문법을 지원하여 코드를 읽고 유지보수하기 편하다는 장점이 있습니다. by [불곰 블로그](http://brownbears.tistory.com)
+- 구글 플레이 스토어에서 유일한 이름이어야 한다.
+- 한번 마켓에 올라가면 변경되어서는 안된다. -> 만약 변경하게되면 전혀 다른 앱이 된다.
+
+## 명령창에서 Gradle 빌드 실행하기
+
+```
+~ > ./gradlew clean assembleDebug
+```
+
+## 외부 라이브러리 추가
 
 
+## support-v4 vs. appcompat-v7
 
 
 
 - backlog
   - support-xxx-v7 vs. support-xxx-v4
-  - sdkVersion: compile vs. min vs. target
   - buildToolVersion vs. plugin version
-  - applicationId는 유일해야 하고 바뀌면 전혀 새로운 앱이 됨
   - 레파지토리 추가 방법, compile, testCompile, annotationProcessor, androidTestCompile 설명
   - 안드로이드 빌드 툴(오른쪽에 나오는거), 플러그인(application, libary, java 등) 설명
   - debug, release
