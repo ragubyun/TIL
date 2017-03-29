@@ -109,7 +109,7 @@ systemProp.https.nonProxyHosts=70.*|localhost
 
 > Groovy는 자바에 파이썬, 루비, 스몰토크등의 특징을 더한 동적 객체 지향 프로그래밍 언어입니다.  JVM에서 동작하고 자바의 강점 위에서 파이썬, 루비, 스몰토크 등의 프로그래밍 언어에 영향을 받은 특징 및 장점이 있습니다. 자바 기반이기 때문에 자바 프로그래머들이 많은 학습을 하지 않아도 프로그래밍을 할 수 있다는 점과 단순화된 문법을 지원하여 코드를 읽고 유지보수하기 편하다는 장점이 있습니다. by [불곰 블로그](http://brownbears.tistory.com)
 
-### TODO pld 내용 간단하게 추가
+### TODO DSL 내용 간단하게 추가 Domain Specific Language
 
 ---
 
@@ -231,6 +231,7 @@ dependencies {
 - 외부 저장소 : group: '~', name: '~', veresion: '~' / 'group:name:version'
   - ex) group: 'com.android.support', name: 'appcompat', version: '25.1.0'
 - android library : 'group:name:version**@aar**'
+- version 명시 : 'junit:junit:4.+' 와 같은 방법은 
 
 ---
 
@@ -313,6 +314,7 @@ Android Lint에서 검사하는 항목 중 대표적인 부분
 - 2016년 7월
 - 안드로이드 특화
 - 이틀
+- 일단 얇아서 좋고, 안드로이드에서 사용하는 Gradle을 전반적으로 빠르게 훑어볼 수 있어서 더 좋다.
 
 ![Gradle 철저 입문](./image/book2_small.jpg)
 
@@ -329,6 +331,7 @@ Android Lint에서 검사하는 항목 중 대표적인 부분
 - 2016년 12월
 - 안드로이드 특화
 - 일주일째 보는 중
+- 발생할 수 있는 문제를 말하고 거기에 대한 해결책을 제시해 가면서 점점 자세한 설명으로 들어가는 형태로 되어있어서 지겹지 않음.
 
 ---
 
