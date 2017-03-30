@@ -1,3 +1,3 @@
 # Gradle
 
-- [Android for Gradle](Gradle/gradle_for_android.md)
+- [Android for Gradle](gradle_for_android.md)
