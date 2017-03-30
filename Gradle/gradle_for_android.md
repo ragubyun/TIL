@@ -101,23 +101,24 @@ systemProp.https.proxyPort=8080
 systemProp.https.nonProxyHosts=70.*|localhost
 ```
 
-## Gradle은 그루비로 작성되어 있다
-
-> Groovy is an agile and dynamic language for the Java Virtual Machine.
-
-### 그루비란 무엇인가?
-
-> Groovy는 자바에 파이썬, 루비, 스몰토크등의 특징을 더한 동적 객체 지향 프로그래밍 언어입니다.  JVM에서 동작하고 자바의 강점 위에서 파이썬, 루비, 스몰토크 등의 프로그래밍 언어에 영향을 받은 특징 및 장점이 있습니다. 자바 기반이기 때문에 자바 프로그래머들이 많은 학습을 하지 않아도 프로그래밍을 할 수 있다는 점과 단순화된 문법을 지원하여 코드를 읽고 유지보수하기 편하다는 장점이 있습니다. by [불곰 블로그](http://brownbears.tistory.com)
-
-### TODO DSL 내용 간단하게 추가 Domain Specific Language
-
 ---
 
 ## 저장소 비교
 
 ```gradle
-repositories {
-    jcenter()
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.3.0'
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+    }
 }
 ```
 
@@ -176,6 +177,22 @@ repositories {
 
 ## SDK Version
 
+```gradle
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        applicationId "com.example.ragu.myapplication"
+        minSdkVersion 19
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    ...
+}
+```
+
 속성 이름|내용
 -|-
 compileSdkVersion|컴파일에 사용할 SDK 버전
@@ -190,10 +207,13 @@ targetSdkVersion|어플리케이션이 의도하는 목적 SDK 버전. 최신버
 ## 빌드 타입 이해하기
 
 ```gradle
-buildTypes {
-    release {
-        minifyEnabled false
-        proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+android {
+    ...
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
     }
 }
 ```
@@ -208,6 +228,10 @@ buildTypes {
 ## 외부 라이브러리 추가
 
 ```gradle
+android {
+    ...
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -226,16 +250,180 @@ dependencies {
 
 ### 라이브러리 위치 지정
 
-- 로컬 파일 시스템 : files('~', '~', ...) or fileTree(dir: '~', include: '~')
+- 로컬 파일 시스템 : files('rain.jar', 'scott.jar', ...) or fileTree(dir: 'libDir', include: ['*.jar'])
   > 실무에서는 외부에 공개된 라이브러리가 아닌 특정 회사에만 공개된 private 라이브러리를 참조하는 경우에만 사용한다. by 안드로이드를 위한 Gradle(저자: 유동환)
-- 외부 저장소 : group: '~', name: '~', veresion: '~' / 'group:name:version'
+- 외부 저장소 : group: 'packageName', name: 'name', veresion: 'ver.' or 'group:name:version'
   - ex) group: 'com.android.support', name: 'appcompat', version: '25.1.0'
-- android library : 'group:name:version**@aar**'
-- version 명시 : 'junit:junit:4.+' 와 같은 방법은 
+- android library : 'group:name:version@aar'
+- version 명시 : 'junit:junit:4.+' 와 같은 방법은 권장되지 않음.
 
 ---
 
-## support-v4 vs. appcompat-v7
+## Flavors
+
+마켓별로 다른 package, version code, version name, sdk version 등을 따로 관리하고 싶은 경우 Gradle 의 "flavor" 기능을 이용하면 쉽게 적용을 할 수 있다.
+
+example
+
+```gradle
+android {
+    ...
+    defaultConfig {...}
+    buildTypes {...}
+    productFlavors {
+        demo {
+            applicationId "com.example.myapp.demo"
+            versionName "1.0-demo"
+        }
+        full {
+            applicationId "com.example.myapp.full"
+            versionName "1.0-full"
+        }
+    }
+}
+```
+
+### Flavor in Looky
+
+build.gradle
+
+```gradle
+android {
+    ...
+    productFlavors {
+        internal {
+            buildConfigField 'String', 'proxyHost', '"' + PROXY_HOST + '"'
+            buildConfigField 'int', 'proxyPort', PROXY_PORT
+            buildConfigField 'String', 'certKeystoreDigest', '"' + CERT_KEYSTORE_DIGEST + '"'
+        }
+
+        production {
+            buildConfigField 'String', 'proxyHost', 'null'
+            buildConfigField 'int', 'proxyPort', '0'
+            buildConfigField 'String', 'certKeystoreDigest', 'null'
+        }
+    }
+}
+```
+
+gradle.properties
+
+```gradle
+PROXY_HOST=70.10.15.10
+PROXY_PORT=8080
+CERT_KEYSTORE_DIGEST=AAAAAgAAABS.......nBLz3uzNP05V3c7
+```
+
+NetModules.java
+
+```java
+if (isNotUnitTest() && BuildConfig.proxyHost != null) {
+    Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(BuildConfig.proxyHost, BuildConfig.proxyPort));
+    clientBuilder.proxy(proxy);
+
+    try {
+        byte[] keyStoreBytes = Base64.decode(BuildConfig.certKeystoreDigest, Base64.DEFAULT);
+        ByteArrayInputStream keyStore = new ByteArrayInputStream(keyStoreBytes);
+        KeyStore keystore = KeyStore.getInstance("BKS");
+        keystore.load(keyStore, "changeit".toCharArray());
+
+        KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        kmf.init(keystore, "changeit".toCharArray());
+
+        TrustManagerFactory tmf = TrustManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        tmf.init(keystore);
+
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
+        SSLSocketFactory socketFactory = sslContext.getSocketFactory();
+
+        clientBuilder.sslSocketFactory(socketFactory);
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+```
+
+> **중요!** Android Library Project는 productFlavor를 지원하지 않는다.
+
+## Build Variants
+
+TODO 여기 캡쳐 이미지
+
+Build Variant = Build Type + Product Flavor
+
+- buildType : debug, release
+- productFlavor : demo, full
+- build variants : demoDebug, demoRelease, fullDebug, fullRelease
+ 
+TODO -> 얘네들도 이미지로??
+
+---
+
+## 자, 이제 Gradle을 이용해서 프로젝트를 빌드해볼까나?
+
+> 그래 위에 설명들은 알았다치고, 어떻게 빌드하는거지?
+
+### 첫번째 방법
+
+- 신경 안쓰거나(프로젝트를 실행하면 자동 빌드됨)
+- [build]-[Clean Project]
+- [build]-[Rebuild Project]
+
+### 두번째 방법
+
+안드로이드 Gradle 플러그인을 이용
+
+TODO 여기 안드로이드 그래들 플러그인 화면
+
+원하는 Task 클릭
+
+### 세번째 방법
+
+쉘에서 직접 Gradle Task 실행하기
+
+```shell
+> ./gradlew clean
+> ./gradlew test
+> ./gradlew clean assembleDebug
+> ./gradlew assemble
+> ./gradlew build
+```
+
+### Gradle 내장 Task에 대한 자세한 설명은 생략하나, 기본적인 Task는 한번만 보고가자
+
+![Diagram of Tasks](./image/tasks_diagram.jpg)
+
+> 특정 Task를 제외하고 빌드하는 방법
+
+```shell
+> ./gradlew build -x check
+```
+
+### Lint 란 무엇인가? feat. check = test + lint
+
+사전적 의미 -> 보푸라기
+
+의심스럽거나, 에러를 발생하기 쉬운 코드에 flag 를 달아 놓는 것
+
+Android Lint에서 검사하는 항목 중 대표적인 부분
+
+- 사용하지 않는 리소스
+- 국제화(I18N; Internationalization) 지원시 이상 여부
+- 성능상 문제가 될 수 있는 부분
+- minSdkLevel, targetSdkLevel, compileSdkLevel에 따라 오류가 발생할 수 있는 부분
+
+을 빌드 시점에 알려준다.
+
+---
+
+## 부록 A : 사용자 커스텀 Task
+
+TODO 간단히 hello world 찍는거, 내장 Task 묶은거 만들어서 안드로이드 그래들 플러그인에 표시되는거 캡쳐캡쳐
+
+---
+
+## 부록 B : support-v4 vs. appcompat-v7
 
 ### Support Library
 
@@ -253,55 +441,7 @@ dependencies {
 
 ---
 
-## productFlavors
-
-```gradle
-productFlavors {
-        internal {
-            buildConfigField 'String', 'proxyHost', '"' + PROXY_HOST + '"'
-            buildConfigField 'int', 'proxyPort', PROXY_PORT
-            buildConfigField 'String', 'certKeystoreDigest', '"' + CERT_KEYSTORE_DIGEST + '"'
-        }
-
-        production {
-            buildConfigField 'String', 'proxyHost', 'null'
-            buildConfigField 'int', 'proxyPort', '0'
-            buildConfigField 'String', 'certKeystoreDigest', 'null'
-        }
-    }
-```
-
----
-
-## 태스크에 대한 자세한 설명은 생략하나, 기본 내장 태스크는 알고가자
-
-- assemble : application -> apk, library -> aar
-- check : lint without test
-- build : assemble + check
-- clean : remove all of things of build result
-
-### Lint 란 무엇인가?
-
-사전적 의미 -> 보푸라기
-
-의심스럽거나, 에러를 발생하기 쉬운 코드에 flag 를 달아 놓는 것
-
-Android Lint에서 검사하는 항목 중 대표적인 부분
-
-- 사용하지 않는 리소스
-- 국제화(I18N; Internationalization) 지원시 이상 여부
-- 성능상 문제가 될 수 있는 부분
-- minSdkLevel, targetSdkLevel, compileSdkLevel에 따라 오류가 발생할 수 있는 부분
-
-## 명령창에서 Gradle 빌드 실행하기
-
-```shell
-> ./gradlew clean assembleDebug
-```
-
----
-
-## 부록 A : 책 소개
+## 부록 C : 책 소개
 
 ![책 3권](./image/books.jpeg)
 
