@@ -187,6 +187,21 @@ repositories {
 
 ---
 
+## application vs. library
+
+gradle.build(Module: app)
+
+```gradle
+apply plugin: 'com.android.application'
+
+...
+```
+
+
+- com.android.application : apk(android package)
+- com.android.library : aar(android archive)
+
+
 ## SDK Version
 
 gradle.build(Module: app)
