@@ -25,7 +25,7 @@ Android 로 보기
 
 ## Gradle 관련 파일
 
-build.gradle (Project: MyAppliation): 크게 두 부분
+build.gradle (Project: MyAppliation)
 
 ```gradle
 buildscript {
@@ -48,7 +48,7 @@ task clean(type: Delete) {
 }
 ```
 
-build.gradle (Module: app): 크게 네 부분
+build.gradle (Module: app)
 
 ```gradle
 apply plugin: 'com.android.application'
@@ -189,6 +189,8 @@ repositories {
 
 ## SDK Version
 
+gradle.build(Module: app)
+
 ```gradle
 android {
     compileSdkVersion 25
@@ -218,6 +220,8 @@ targetSdkVersion|어플리케이션이 의도하는 목적 SDK 버전. 최신버
 
 ## 빌드 타입 이해하기
 
+gradle.build(Module: app)
+
 ```gradle
 android {
     ...
@@ -238,6 +242,8 @@ android {
 ---
 
 ## 외부 라이브러리 의존성 추가
+
+gradle.build(Module: app)
 
 ```gradle
 android {...}
@@ -417,7 +423,7 @@ android {
 }
 ```
 
-```java
+```groovy
 buildConfigField 'type', 'name', 'value'
 buildConfigField(T type, String name, String value)
 ```
@@ -487,6 +493,7 @@ Build Type x Product Flavor
 
 ## 부록 A : Custom Task
 
+gradle.build(Project: MyApplication)
 ```groovy
 buildscript {...}
 allprojects {...}
