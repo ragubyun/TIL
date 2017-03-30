@@ -360,7 +360,7 @@ Android Lint에서 검사하는 항목 중 대표적인 부분
 
 ---
 
-## Flavors
+## Product Flavors
 
 ![flavor](./image/flavor.png)
 
@@ -416,7 +416,7 @@ Build Variants
 
 ---
 
-### Flavor in Looky
+### Product Flavor in Looky
 
 build.gradle(Module: app)
 
