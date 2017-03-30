@@ -1,8 +1,8 @@
 # 궁금했지만 항상 그냥 지나쳤던 안드로이드에서의 Gradle, 얉게 한번 파보자. ~~사실 별로 궁금해하지 않고 그냥 사용 하는 경우가 대다수..~~
 
-## Gradle? 그래들? 그레이들?
+## Gradle? 그래들? 그레이들? 일단 발음부터 좀 해결하자
 
-- 책에서서는 ‘그레이들’로 발음하는 경우가 많음
+- 책에서는 ‘그레이들’로 발음하는 경우가 많음
 - 어차피 한글로 구글링해도 gradle로 검색됨
 - 결론: 그래-들
 - 빌드 자동화 툴 (친구들: ant, maven, make)
@@ -10,8 +10,6 @@
 ## 빌드란 무엇인가?
 
 > 내가 작성한 코드를 `apk(android package)`, `aar(android archive)`로 만드는 과정
-
----
 
 ## 안드로이드 기본 프로젝트 구조를 살펴보자
 
@@ -22,6 +20,8 @@ Project 로 보기
 Android 로 보기
 
 ![Android](./image/structure_android_small.png)
+
+---
 
 ## Gradle 관련 파일
 
@@ -103,6 +103,20 @@ systemProp.https.nonProxyHosts=70.*|localhost
 
 ---
 
+## 안드로이드 Gradle 플러그인
+
+```gradle
+buildscript {
+    ...
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.3.0'
+    }
+}
+```
+
+- 안드로이드 스튜디오에서 Gradle 빌드를 할 수 있게 해주는 기능 제공
+- 안드로이드 스튜디오와 함께 버전이 올라가고 있음
+
 ## 저장소 비교
 
 ```gradle
@@ -110,9 +124,7 @@ buildscript {
     repositories {
         jcenter()
     }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.0'
-    }
+    dependencies {...}
 }
 
 allprojects {
@@ -225,12 +237,10 @@ android {
 
 ---
 
-## 외부 라이브러리 추가
+## 외부 라이브러리 의존성 추가
 
 ```gradle
-android {
-    ...
-}
+android {...}
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -252,121 +262,27 @@ dependencies {
 
 - 로컬 파일 시스템 : files('rain.jar', 'scott.jar', ...) or fileTree(dir: 'libDir', include: ['*.jar'])
   > 실무에서는 외부에 공개된 라이브러리가 아닌 특정 회사에만 공개된 private 라이브러리를 참조하는 경우에만 사용한다. by 안드로이드를 위한 Gradle(저자: 유동환)
-- 외부 저장소 : group: 'packageName', name: 'name', veresion: 'ver.' or 'group:name:version'
-  - ex) group: 'com.android.support', name: 'appcompat', version: '25.1.0'
+- 외부 저장소 : group: 'group', name: 'name', veresion: 'ver.' or 'group:name:version'
+  - ex) group: 'com.android.support', name: 'appcompat-v7', version: '25.1.0'
 - android library : 'group:name:version@aar'
 - version 명시 : 'junit:junit:4.+' 와 같은 방법은 권장되지 않음.
 
 ---
 
-## Flavors
+## 자, 이제 Gradle을 이용해서 프로젝트를 빌드 해 보자
 
-마켓별로 다른 package, version code, version name, sdk version 등을 따로 관리하고 싶은 경우 Gradle 의 "flavor" 기능을 이용하면 쉽게 적용을 할 수 있다.
-
-example
-
-```gradle
-android {
-    ...
-    defaultConfig {...}
-    buildTypes {...}
-    productFlavors {
-        demo {
-            applicationId "com.example.myapp.demo"
-            versionName "1.0-demo"
-        }
-        full {
-            applicationId "com.example.myapp.full"
-            versionName "1.0-full"
-        }
-    }
-}
-```
-
-### Flavor in Looky
-
-build.gradle
-
-```gradle
-android {
-    ...
-    productFlavors {
-        internal {
-            buildConfigField 'String', 'proxyHost', '"' + PROXY_HOST + '"'
-            buildConfigField 'int', 'proxyPort', PROXY_PORT
-            buildConfigField 'String', 'certKeystoreDigest', '"' + CERT_KEYSTORE_DIGEST + '"'
-        }
-
-        production {
-            buildConfigField 'String', 'proxyHost', 'null'
-            buildConfigField 'int', 'proxyPort', '0'
-            buildConfigField 'String', 'certKeystoreDigest', 'null'
-        }
-    }
-}
-```
-
-gradle.properties
-
-```gradle
-PROXY_HOST=70.10.15.10
-PROXY_PORT=8080
-CERT_KEYSTORE_DIGEST=AAAAAgAAABS.......nBLz3uzNP05V3c7
-```
-
-NetModules.java
-
-```java
-if (isNotUnitTest() && BuildConfig.proxyHost != null) {
-    Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(BuildConfig.proxyHost, BuildConfig.proxyPort));
-    clientBuilder.proxy(proxy);
-
-    try {
-        byte[] keyStoreBytes = Base64.decode(BuildConfig.certKeystoreDigest, Base64.DEFAULT);
-        ByteArrayInputStream keyStore = new ByteArrayInputStream(keyStoreBytes);
-        KeyStore keystore = KeyStore.getInstance("BKS");
-        keystore.load(keyStore, "changeit".toCharArray());
-
-        KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-        kmf.init(keystore, "changeit".toCharArray());
-
-        TrustManagerFactory tmf = TrustManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-        tmf.init(keystore);
-
-        SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
-        SSLSocketFactory socketFactory = sslContext.getSocketFactory();
-
-        clientBuilder.sslSocketFactory(socketFactory);
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-}
-```
-
-> **중요!** Android Library Project는 productFlavor를 지원하지 않는다.
-
-## Build Variants
-
-TODO 여기 캡쳐 이미지
-
-Build Variant = Build Type + Product Flavor
-
-- buildType : debug, release
-- productFlavor : demo, full
-- build variants : demoDebug, demoRelease, fullDebug, fullRelease
- 
-TODO -> 얘네들도 이미지로??
-
----
-
-## 자, 이제 Gradle을 이용해서 프로젝트를 빌드해볼까나?
-
-> 그래 위에 설명들은 알았다치고, 어떻게 빌드하는거지?
+> 그래 위에 설명들은 알았다 치고, 어떻게 빌드하는거지?
 
 ### 첫번째 방법
 
-- 신경 안쓰거나(프로젝트를 실행하면 자동 빌드됨)
+![run](./image/run.png)
+
+- 딱히 신경 안쓰고 걍 Run
+
+![build](./image/build.png)
+
+> 뭔가 내가 작성한게 적용이 안된것만 같은 느낌...
+
 - [build]-[Clean Project]
 - [build]-[Rebuild Project]
 
@@ -374,9 +290,9 @@ TODO -> 얘네들도 이미지로??
 
 안드로이드 Gradle 플러그인을 이용
 
-TODO 여기 안드로이드 그래들 플러그인 화면
+![android gradle plugin](./image/android_gradle_plugin.png)
 
-원하는 Task 클릭
+원하는 Task 더블 클릭
 
 ### 세번째 방법
 
@@ -392,7 +308,13 @@ TODO 여기 안드로이드 그래들 플러그인 화면
 
 ### Gradle 내장 Task에 대한 자세한 설명은 생략하나, 기본적인 Task는 한번만 보고가자
 
+#### Java 플러그인의 태스크 의존 관계(DAG; directed acyclic graph)
+
+![Java Plugin DAG](./image/java_plugin_dag.png)
+
 ![Diagram of Tasks](./image/tasks_diagram.jpg)
+
+~~뭘 좋아하는지 몰라서 다 준비해봤어~~
 
 > 특정 Task를 제외하고 빌드하는 방법
 
@@ -417,9 +339,172 @@ Android Lint에서 검사하는 항목 중 대표적인 부분
 
 ---
 
-## 부록 A : 사용자 커스텀 Task
+## Flavors
 
-TODO 간단히 hello world 찍는거, 내장 Task 묶은거 만들어서 안드로이드 그래들 플러그인에 표시되는거 캡쳐캡쳐
+![flavor](./image/flavor.png)
+
+마켓별로 다른 package, version code, version name, sdk version 등을 따로 관리하고 싶은 경우 Gradle 의 `flavor` 기능을 이용하면 쉽게 적용을 할 수 있다.
+
+#### 사용 예)
+
+build.gradle(module: app)
+```gradle
+android {
+    ...
+    defaultConfig {...}
+    buildTypes {...}
+    productFlavors {
+        demo {
+            applicationId "io.github.ragubyun.myapplication.demo"
+            versionName "1.0-demo"
+        }
+        full {
+            applicationId "io.github.ragubyun.myapplication.full"
+            versionName "1.0-full"
+        }
+    }
+    sourceSets {
+        demo {
+            java.srcDirs = ['src/main/java', 'src/demo/java']
+            res.srcDirs = ['src/main/res', 'src/demo/res']
+        }
+        full {
+            java.srcDirs = ['src/main/java', 'src/full/java']
+            res.srcDirs = ['src/main/res', 'src/full/res']
+        }
+    }
+}
+```
+
+프로젝트 폴더 구조
+
+![source sets](./image/source_sets.png)
+
+Build Variants
+
+![Build Variants](./image/build_variants.png)
+
+- 사용자별 구분
+- 국가별 구분
+- 사용 환경에 따른 구분
+- ...
+
+> `applicationId`를 다르게 가져가므로 사실상 **완전히 별개의 앱**이라고 볼 수 있다.
+
+> **중요!** Android Library Project는 `productFlavor`를 지원하지 않는다.
+
+---
+
+### Flavor in Looky
+
+build.gradle(Module: app)
+
+```gradle
+android {
+    ...
+    productFlavors {
+        internal {
+            buildConfigField 'String', 'proxyHost', '"' + PROXY_HOST + '"'
+            buildConfigField 'int', 'proxyPort', PROXY_PORT
+            buildConfigField 'String', 'certKeystoreDigest', '"' + CERT_KEYSTORE_DIGEST + '"'
+        }
+        production {
+            buildConfigField 'String', 'proxyHost', 'null'
+            buildConfigField 'int', 'proxyPort', '0'
+            buildConfigField 'String', 'certKeystoreDigest', 'null'
+        }
+    }
+}
+```
+
+```java
+buildConfigField 'type', 'name', 'value'
+buildConfigField(T type, String name, String value)
+```
+
+gradle.properties
+
+```gradle
+PROXY_HOST=70.10.15.10
+PROXY_PORT=8080
+CERT_KEYSTORE_DIGEST=AAAAAgAAABS.......nBLz3uzNP05V3c7
+```
+
+Build Variants
+
+![Build Variants Looky](./image/build_variants_looky.png)
+
+NetModules.java
+
+```java
+@Provides
+@Singleton
+public OkHttpClient httpClient() {
+    OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
+            .connectTimeout(1, TimeUnit.MINUTES)
+            .readTimeout(1, TimeUnit.MINUTES)
+            .writeTimeout(1, TimeUnit.MINUTES);
+
+    if (isNotUnitTest() && BuildConfig.proxyHost != null) {
+        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(BuildConfig.proxyHost, BuildConfig.proxyPort));
+        clientBuilder.proxy(proxy);
+
+        try {
+            byte[] keyStoreBytes = Base64.decode(BuildConfig.certKeystoreDigest, Base64.DEFAULT);
+            ByteArrayInputStream keyStore = new ByteArrayInputStream(keyStoreBytes);
+            KeyStore keystore = KeyStore.getInstance("BKS");
+            keystore.load(keyStore, "changeit".toCharArray());
+
+            KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+            kmf.init(keystore, "changeit".toCharArray());
+
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+            tmf.init(keystore);
+
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
+            SSLSocketFactory socketFactory = sslContext.getSocketFactory();
+
+            clientBuilder.sslSocketFactory(socketFactory);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    return clientBuilder.build();
+}
+```
+
+#### Build Variants Matrix
+
+Build Type x Product Flavor
+
+- buildType : debug, release
+- productFlavor : demo, full
+- build variants : demoDebug, demoRelease, fullDebug, fullRelease
+
+---
+
+## 부록 A : Custom Task
+
+```groovy
+buildscript {...}
+allprojects {...}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+task sayHello(group: 'custom',
+    description: 'This task says Hello',
+    dependsOn: clean) << {
+    println 'Hello Gradle!'
+}
+```
+
+![Custom Task](./image/custom_task.png)
+
+![Run Custom Task](./image/run_custom_task.png)
 
 ---
 
@@ -471,16 +556,6 @@ TODO 간단히 hello world 찍는거, 내장 Task 묶은거 만들어서 안드�
 - 2016년 12월
 - 안드로이드 특화
 - 일주일째 보는 중
-- 발생할 수 있는 문제를 말하고 거기에 대한 해결책을 제시해 가면서 점점 자세한 설명으로 들어가는 형태로 되어있어서 지겹지 않음.
+- 발생할 수 있는 문제 혹은 하고싶은 상황을 만들어 놓고 해결책을 제시해 가면서 점점 자세한 설명으로 들어가는 형태로 되어있어서 지겹지 않음.
 
----
-
-## backlog
-  
-  - buildToolVersion vs. plugin version
-  
-  - 안드로이드 빌드 툴(오른쪽에 나오는거), 플러그인(application, libary, java 등) 설명
-  - debug, release
-  - 빌드 변형 구성 flavor(product, demo, full)
-  - flavor 실제 코드에 적용시키는 방법
-  -
+끝
