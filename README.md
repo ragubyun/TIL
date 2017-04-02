@@ -9,3 +9,5 @@ Today I Learned
 - [Gradle](Gradle)
 - [Node.js](nodejs)
 - [Vim](Vim)
+
+[TODO List](todo_list.md)
