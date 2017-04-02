@@ -7,3 +7,5 @@ Today I Learned
 ## Index
 - [Ruby](Ruby)
 - [Gradle](Gradle)
+- [Node.js](nodejs)
+- [Vim](Vim)
