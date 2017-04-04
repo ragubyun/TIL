@@ -9,5 +9,6 @@ Today I Learned
 - [Gradle](Gradle)
 - [Node.js](nodejs)
 - [Vim](Vim)
+- [Android](Android)
 
 [TODO List](todo_list.md)
