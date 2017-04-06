@@ -1,3 +1,3 @@
 # Ruby
 
-- [Commands](Command.md)
+- [커멘드 모음](Command.md)

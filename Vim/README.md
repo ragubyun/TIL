@@ -1,3 +1,3 @@
 # Vim
 
-- [Vim shortcut](vim_shortcut.md)
+- [자꾸 까먹는 단축키 모음](vim_shortcut.md)
