@@ -6,7 +6,7 @@
 
 바로 `Login Shell`과 `Non-login Shell`
 
-- Login Shell : 계정과 암호를 입력하여 계정에 로그인 하는 시점.
+- Login Shell : 계정과 암호를 입력하여 계정에 로그인 하는 시점.
   - GUI 계정 접속 -> `.profile` 로드(shell의 종류에 관계없이 로드됨)
   - ssh로 원격 접속(shell을 통해서 계정에 접속 하게됨) -> `.bash_profile`(shell이 zsh인 경우 `.zprofile`) 로드
 - Non-Login Shell : 계정 로그인과 관계없이 shell을 실행하는 시점.
