@@ -32,4 +32,4 @@ syntax on        " 문법 하이라이트 킴"
 
 ---
 
-출처: http://norux.me/13
+출처: [http://norux.me/13](http://norux.me/13)
