@@ -29,3 +29,7 @@ syntax on        " 문법 하이라이트 킴"
 ```
 ~/.vimrc
 ```
+
+---
+
+출처: http://norux.me/13
