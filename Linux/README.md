@@ -1,3 +1,3 @@
 # Linux
 
-- [.profile, .bash_profile, .bashrc 의 차이점](profile_vs_bash_profile_vs_bashrc.md)
+- [.profile, .bash_profile, .bashrc 의 차이점](./profile-vs-bash_profile-vs-bashrc.md)
