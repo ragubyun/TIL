@@ -1,9 +1,9 @@
 # TIL - Today I Learned
 
-- [Ruby](ruby)
-- [Gradle](gradle)
-- [Node.js](nodejs)
-- [Vim](vim)
-- [Android](android)
-- [Linux](linux)
-- [Python](python)
+- [Ruby](./ruby/README.md)
+- [Gradle](./gradle/README.md)
+- [Node.js](./nodejs/README.md)
+- [Vim](./vim/README.md)
+- [Android](./android/README.md)
+- [Linux](./linux/README.md)
+- [Python](./python/README.md)
