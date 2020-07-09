@@ -6,8 +6,15 @@
 
 ## zsh
 
+아래 shell script를 .zshrc에 추가
+
 ``` shell
-$ export PROMPT='%F{cyan}%n@%~ $ %f'
+function parse_git_branch() {
+    git branch 2> /dev/null | sed -n -e 's/^\* \(.*\)/(\1) /p'
+}
+
+setopt PROMPT_SUBST
+export PROMPT='%F{039}%~ %F{041}$(parse_git_branch)%F{039}$ %f'
 ```
 
 - `%n` $USERNAME.
@@ -22,8 +29,15 @@ more detail : [ZSH Prompt Expansion](http://zsh.sourceforge.net/Doc/Release/Prom
 
 ## bash
 
+아래 shell script를 .bash_profile에 추가
+
 ``` shell
-$ export PS1="\e[0;32m\u@\w $ \e[0m"
+parse_git_branch() {
+  git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+}
+
+# export PS1="\u@\h \W\[\033[32m\]\$(parse_git_branch)\[\033[00m\] $ "
+# export PS1="\e[0;32m\u@\w $ \e[0m"
 ```
 
 - `\u` $USERNAME.
@@ -45,4 +59,7 @@ $ export PS1="\e[0;32m\u@\w $ \e[0m"
     - 36 Cyan
     - 37 Light gray
 
-참고: [Change basn prompt linux](https://phoenixnap.com/kb/change-bash-prompt-linux)
+### 참고
+
+- [Change basn prompt linux](https://phoenixnap.com/kb/change-bash-prompt-linux)
+- [Add Git Branch Name to Terminal Prompt (Linux/Mac)](https://gist.github.com/joseluisq/1e96c54fa4e1e5647940)
