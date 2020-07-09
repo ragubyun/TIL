@@ -2,7 +2,9 @@
 
 > 이렇게 깔끔하게 바꾸고싶다.
 
-![sample prompt](./images/sample-prompt.png)
+![prompt clean](./images/prompt-not-clean.png)
+
+![prompt not clean](./images/prompt-clean.png)
 
 ## zsh
 
@@ -13,8 +15,25 @@ function parse_git_branch() {
     git branch 2> /dev/null | sed -n -e 's/^\* \(.*\)/(\1) /p'
 }
 
+COLOR_RED=160
+COLOR_ORANGE=172
+COLOR_SKY=039
+COLOR_GREEN=041
+
+function branch_color() {
+    local git_status="$(git status 2> /dev/null)"
+
+    if [[ $git_status =~ "Changes not staged for commit" ]]; then
+      echo -e $COLOR_RED
+    elif [[ $git_status =~ "Changes to be committed" ]]; then
+      echo -e $COLOR_ORANGE
+    else
+      echo -e $COLOR_GREEN
+    fi
+}
+
 setopt PROMPT_SUBST
-export PROMPT='%F{039}%~ %F{041}$(parse_git_branch)%F{039}$ %f'
+export PROMPT='%F{$COLOR_SKY}%~ %F{$(branch_color)}$(parse_git_branch)%F{$COLOR_SKY}$ %f'
 ```
 
 - `%n` $USERNAME.
@@ -63,3 +82,4 @@ parse_git_branch() {
 
 - [Change basn prompt linux](https://phoenixnap.com/kb/change-bash-prompt-linux)
 - [Add Git Branch Name to Terminal Prompt (Linux/Mac)](https://gist.github.com/joseluisq/1e96c54fa4e1e5647940)
+- [Show your git status and branch (in color) at the command prompt](https://coderwall.com/p/pn8f0g/show-your-git-status-and-branch-in-color-at-the-command-prompt)
