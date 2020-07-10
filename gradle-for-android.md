@@ -15,11 +15,11 @@
 
 Project 로 보기
 
-![Project](./image/structure_project_small.png)
+![Project](./images/structure_project_small.png)
 
 Android 로 보기
 
-![Android](./image/structure_android_small.png)
+![Android](./images/structure_android_small.png)
 
 ---
 
@@ -296,11 +296,11 @@ dependencies {
 
 ### 첫번째 방법
 
-![run](./image/run.png)
+![run](./images/run.png)
 
 - 딱히 신경 안쓰고 걍 Run
 
-![build](./image/build.png)
+![build](./images/build.png)
 
 > 뭔가 내가 작성한게 적용이 안된것만 같은 느낌...
 
@@ -311,7 +311,7 @@ dependencies {
 
 안드로이드 Gradle 플러그인을 이용
 
-![android gradle plugin](./image/android_gradle_plugin.png)
+![android gradle plugin](./images/android_gradle_plugin.png)
 
 원하는 Task 더블 클릭
 
@@ -331,9 +331,9 @@ dependencies {
 
 #### Java 플러그인의 태스크 의존 관계(DAG; directed acyclic graph)
 
-![Java Plugin DAG](./image/java_plugin_dag.png)
+![Java Plugin DAG](./images/java_plugin_dag.png)
 
-![Diagram of Tasks](./image/tasks_diagram.jpg)
+![Diagram of Tasks](./images/tasks_diagram.jpg)
 
 ~~뭘 좋아하는지 몰라서 다 준비해봤어~~
 
@@ -362,7 +362,7 @@ Android Lint에서 검사하는 항목 중 대표적인 부분
 
 ## Product Flavors
 
-![flavor](./image/flavor.png)
+![flavor](./images/flavor.png)
 
 마켓별로 다른 package, version code, version name, sdk version 등을 따로 관리하고 싶은 경우 Gradle 의 `flavor` 기능을 이용하면 쉽게 적용을 할 수 있다.
 
@@ -399,11 +399,11 @@ android {
 
 프로젝트 폴더 구조
 
-![source sets](./image/source_sets.png)
+![source sets](./images/source_sets.png)
 
 Build Variants
 
-![Build Variants](./image/build_variants.png)
+![Build Variants](./images/build_variants.png)
 
 - 사용자별 구분
 - 국가별 구분
@@ -453,7 +453,7 @@ CERT_KEYSTORE_DIGEST=AAAAAgAAABS.......nBLz3uzNP05V3c7
 
 Build Variants
 
-![Build Variants Looky](./image/build_variants_looky.png)
+![Build Variants Looky](./images/build_variants_looky.png)
 
 NetModules.java
 
@@ -524,9 +524,9 @@ task sayHello(group: 'custom',
 }
 ```
 
-![Custom Task](./image/custom_task.png)
+![Custom Task](./images/custom_task.png)
 
-![Run Custom Task](./image/run_custom_task.png)
+![Run Custom Task](./images/run_custom_task.png)
 
 ---
 
@@ -550,11 +550,11 @@ task sayHello(group: 'custom',
 
 ## 부록 C : 책 소개
 
-![책 3권](./image/books.jpeg)
+![책 3권](./images/books.jpeg)
 
 ~~책 소개를 가장한 노트북 자랑질...~~
 
-![안드로이드를 위한 Gradle](./image/book1_small.jpg)
+![안드로이드를 위한 Gradle](./images/book1_small.jpg)
 
 - 110 페이지
 - 국내도서
@@ -563,7 +563,7 @@ task sayHello(group: 'custom',
 - 이틀
 - 일단 얇아서 좋고, 안드로이드에서 사용하는 Gradle을 전반적으로 빠르게 훑어볼 수 있어서 더 좋다.
 
-![Gradle 철저 입문](./image/book2_small.jpg)
+![Gradle 철저 입문](./images/book2_small.jpg)
 
 - 620 페이지
 - 번역서(일본)
@@ -571,7 +571,7 @@ task sayHello(group: 'custom',
 - 안드로이드 특화 아님
 - 하루
 
-![그레이들 레시비](./image/book3_small.jpg)
+![그레이들 레시비](./images/book3_small.jpg)
 
 - 171 페이지
 - 번역서(미쿡)
