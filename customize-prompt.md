@@ -19,14 +19,20 @@ COLOR_RED=160
 COLOR_ORANGE=172
 COLOR_SKY=039
 COLOR_GREEN=041
+COLOR_GREY=008
+COLOR_PUPPLE=099
 
 function branch_color() {
     local git_status="$(git status 2> /dev/null)"
 
-    if [[ $git_status =~ "Changes not staged for commit" ]]; then
+    if [[ $git_status =~ "Untracked files" ]]; then
+      echo -e $COLOR_GREY
+    elif [[ $git_status =~ "Changes not staged for commit" ]]; then
       echo -e $COLOR_RED
     elif [[ $git_status =~ "Changes to be committed" ]]; then
       echo -e $COLOR_ORANGE
+    elif [[ $git_status =~ "Your branch is ahead of" ]]; then
+      echo -e $COLOR_PUPPLE
     else
       echo -e $COLOR_GREEN
     fi
