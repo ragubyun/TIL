@@ -12,3 +12,4 @@
 - [자꾸 까먹는 vim 단축키 모음](./vim-shortcut.md)
 - [.vimrc 예제](./vim-vimrc-sample.md)
 - [Github 여러 계정 SSH key 등록 및 관리하기](./multiple-ssh-keys-for-github.md)
+- [작업 끝난 branch를 위한 꿀 커맨드 alias 설정](./alias-for-after-work-with-branch.md)
