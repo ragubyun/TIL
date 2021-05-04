@@ -1,3 +1,4 @@
 theme: jekyll-theme-minimal
+url: "https://blog.ragubyun.com"
 plugins:
     - jekyll-sitemap
